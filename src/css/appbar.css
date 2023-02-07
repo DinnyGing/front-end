@@ -1,0 +1,20 @@
+.bar{
+    background-color: #107980;
+    color: #EDE1CF;
+    height: 10vh;
+}
+.dialog{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: space-around;
+    margin: 30px 20px;
+}
+.button{
+    background-color: #EDE1CF;
+    padding: 10px 25px;
+    border: none;
+    color: #107980;
+    font-size: medium;
+    border-radius: 5px;
+}
