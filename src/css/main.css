@@ -1,24 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap');
+.t{
+    font-family: 'Montserrat', sans-serif;
+    width: 100%;
+    display: block;
+    text-align: center;
+}
+
 body{
     margin: 0;
-    background-color: #B6ADAF;
+    background-color: #D9C5BC;
 }
 .app{
-    margin: 0;
-    padding: 0;
+    margin: 0px;
+    width: 1;
+    padding: 0px;
 }
-.paper{
+.Paper{
     background-color: #D9C5BC;
 }
-.container{
-    margin: 0;
-    padding: 0;
-    background-color: #D9C5BC;
-    
-}
-.box{
-    width: "100%";
-    height: 90vh;
-    margin: '0';
+.Box{
+    height: auto;
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-end;

@@ -12,28 +12,28 @@ function App() {
   const[isLoginedIn, setLog] = useState(false);
 
   const [user, setUser] = useState();
+  const [isChanged, setChange] = useState(false);
+  const[tags, setTags] = useState([]);
 
-  useEffect(()=>{
-    console.log(isLoginedIn);
-  })
-  const [value,setValue] = useState();
+  
+  // const [value,setValue] = useState();
 
-  const refresh = ()=>{
-      // it re-renders the component
-     setValue({});
-  }
+  // const refresh = ()=>{
+  //     // it re-renders the component
+  //    setValue({});
+  // }
   
   return (
     <div className="app">
       <Appbar onLog ={setLog} isLog={isLoginedIn} onUser={setUser}/>
-      <Container class='container' fixed>
-        <Box class ='box'>
-          {user != null ? <Tags idUser={user.id}/>:
-          <Paper elevation={6} style={{margin:"10px",padding:"15px", width: "200vh", textAlign:"left"}}>
+      <Container fixed>
+        <Box className ="Box">
+          {user != null ? <Tags idUser={user.id} tags={tags} onTags={setTags}/>:
+          <Paper elevation={6} style={{margin:"10px 0px",padding:"15px", width: "100vw", textAlign:"center"}}>
           <h1>Please login in your acount</h1>
  
          </Paper>}
-         {user != null && <AddTag nameTag="" idUser={user.id}/>}
+         {user != null && <AddTag tags={tags} nameTag="" idUser={user.id}/>}
         </Box>
         
       </Container>

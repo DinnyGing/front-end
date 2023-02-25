@@ -2,13 +2,15 @@ import * as React from 'react';
 import {useEffect, useState, useRef} from 'react'; 
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
-
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import ExpandCircleDownIcon from '@mui/icons-material/ExpandCircleDown';
 import SchoolIcon from '@mui/icons-material/School';
-import AddTag from "./AddTag"
+import AddTag from "./AddTag";
+import Words from "./Words";
+import AddWord from "./AddWord";
+import Learn from "./Learn";
 import "../css/main.css"
 
 export default function SimplePaper(props) {
@@ -17,7 +19,7 @@ export default function SimplePaper(props) {
       fetch(`http://localhost:8087/${id}/tags/`)
         .then(res=>res.json())
         .then((result)=>{
-          setTags(result);
+          props.onTags(result);
         }
       )
       }
@@ -26,12 +28,18 @@ export default function SimplePaper(props) {
       }, []);
 
       
-      useEffect(() => {
-        const id = setInterval(() => {
+      // useEffect(() => {
+      //   const id = setInterval(() => {
+      //   getTags();
+      // }, 500);
+      // return () => clearInterval(id);
+      // }, [])
+      
+      React.useEffect(() => {    
+        // Изменяем заголовок html-страницы   
         getTags();
-      }, 500);
-      return () => clearInterval(id);
-      }, [])
+      },
+      [props.tags]); 
 
       const DeleteTag = (id) => {
         fetch(`http://localhost:8087/${props.idUser}/tags/${id}/delete`,
@@ -40,11 +48,23 @@ export default function SimplePaper(props) {
           headers: {"Content-Type": "application/json"}
         }).then(() => {
             console.log("Tag is deleted");
+            getTags();
         })
       };
 
-      const[tags, setTags] = React.useState([]);
+
+      function refresh(items)
+      {
+        return items.sort(()=> Math.random()-0.5);
+      }
+
+      const items = [254, 45, 212, 365, 2543];
+
+      // const[tags, setTags] = React.useState(props.tags);
       const[id, setId] = useState(props.idUser);
+      const[id_tag, setIdTag] = useState(-1);
+      const[name_tag, setNameTag] = useState("");
+      const[getWords, setGetWords] = useState(false);
   return (
     <Box
       sx={{
@@ -57,34 +77,39 @@ export default function SimplePaper(props) {
         },
       }}
     >
-      {tags.length == 0  &&
-          <Paper elevation={6} style={{margin:"10px",padding:"15px", width: "190vh", textAlign:"left"}}>
+      {props.tags.length === 0  ?
+          <Paper elevation={6} style={{margin:"10px",padding:"15px", width: "80vw", textAlign:"left"}}>
           <h1 textAlign= "center">Add new words</h1>
  
-         </Paper>}
-      <Paper class="paper" style={{margin:"10px",padding:"15px", width: "190vh", textAlign:"left"}}>
-      {tags.map(tag=>( 
+         </Paper> :
+      <Box>
+      <Paper className="Paper" style={{margin:"10px",padding:"15px", width: "80vw", textAlign:"left"}}>
+      {props.tags.map(tag=>( 
                 <Paper elevation={6} style={{display: 'flex',
                 flexWrap: 'nowrap', alignItems: 'flex-end', margin:"10px",padding:"5px 15px", justifyContent: "space-between", textAlign:"left"}} key={tag.id}>
                   <h1>#{tag.name}</h1>
                   <Box>
-                  <Fab style={{margin: "5px", backgroundColor:"#76A1A7"}} color="secondary" aria-label="edit">
-                    <ExpandCircleDownIcon />
+                  <Fab style={{margin: "5px", backgroundColor:"#76A1A7"}} color="secondary" aria-label="get"  onClick={()=> {
+                    setIdTag(tag.id);
+                    setNameTag(tag.name)
+                    }} >
+                    <ExpandCircleDownIcon/>
                   </Fab>
-                  <Fab style={{margin: "5px", backgroundColor:"#76A1A7"}} color="secondary" aria-label="edit">
-                    <AddIcon />
-                  </Fab>
-                  <Fab style={{margin: "5px", backgroundColor:"#76A1A7"}} color="secondary" aria-label="edit">
-                    <SchoolIcon />
-                  </Fab>
-                  <AddTag nameTag={tag.name} idUser={id} idTag = {tag.id}/>
-                  <Fab style={{margin: "5px", backgroundColor:"#76A1A7"}} color="secondary" aria-label="edit">
-                    <DeleteForeverIcon onClick={() => DeleteTag(tag.id)} />
+                  <AddWord word="" idUser={id} idTag = {tag.id}/>
+                  <Learn idUser={id} idTag = {tag.id} />
+                  <AddTag nameTag={tag.name} idUser={id} idTag = {tag.id} getTags={getTags}/>
+                  <Fab style={{margin: "5px", backgroundColor:"#76A1A7"}} color="secondary" aria-label="delete" onClick={() => DeleteTag(tag.id)}>
+                    <DeleteForeverIcon />
                   </Fab>
                   </Box>
                </Paper>
               ))}
       </Paper>
+      <Paper class="paper" style={{margin:"10px",padding:"15px", width: "190wh", textAlign:"left"}}>
+      {id_tag != -1 && <Words id_user={props.idUser} id_tag={id_tag} name_tag={name_tag}/>}
+      </Paper>
+      </Box>
+}
     </Box>
   );
 }
