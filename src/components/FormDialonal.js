@@ -5,6 +5,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import Typography from '@mui/material/Typography';
 
 export default function FormDialog(props) {
   const [open, setOpen] = React.useState(false);
@@ -42,24 +43,64 @@ export default function FormDialog(props) {
     props.onLog(true);
     setOpen(false);
   };
+  // var regexpEmail = new RegExp("^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$");
+  // var regexpPhone = new RegExp("^+380^\+?3?8?(0[\s\.-]\d{2}[\s\.-]\d{3}[\s\.-]\d{2}[\s\.-]\d{2})$[0-9]{9}$");
+
   const Register = (e) => {
     e.preventDefault()
-    const user = {login: login, password: password, phone: phone, email: email}
-    console.log(user);
-    fetch("http://localhost:8087/register",
-    {
-      method:"POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify(user)
-    }).then((res) => {
-        console.log("Register is succes");
-    })
-    setOpen(false);
+    if(!(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/.test(password))){
+      setColorPass("error")
+      setColorCheckPass("primary")
+      setColorPhone("primary")
+      setColorEmail("primary")
+      setError("Password must consist 8 symbols, where are at least 1 uppercase letter and 1 lowercase letter")
+    }
+    else if(password !== checkPassword){
+      setColorPass("primary")
+      setColorCheckPass("error")
+      setColorPhone("primary")
+      setColorEmail("primary")
+      setError("Passwords aren't identety")
+    }
+    else if(!(/^\+?3?8?(0[\s\.-]\d{2}[\s\.-]\d{3}[\s\.-]\d{2}[\s\.-]\d{2})$/.test(phone))){
+      setColorPass("primary")
+      setColorCheckPass("primary")
+      setColorPhone("error")
+      setColorEmail("primary")
+      setError("Phone isn't like +380 XX XXX XX XX or +380-XX-XXX-XX-XX")
+    }
+    else if(!(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email))){
+      setColorPass("primary")
+      setColorCheckPass("primary")
+      setColorPhone("primary")
+      setColorEmail("error")
+      setError("Email isn't like ...@gmail.com")
+    }
+    else{
+      const user = {login: login, password: password, phone: phone, email: email}
+      console.log(user);
+      fetch("http://localhost:8087/register",
+      {
+        method:"POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(user)
+      }).then((res) => {
+          console.log("Register is succes");
+      })
+      setOpen(false);
+    }
+    
   };
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
-  const [phone, setPhone] = useState("");
+  const [checkPassword, setCheckPassword] = useState("");
+  const [phone, setPhone] = useState("+380");
   const [email, setEmail] = useState("");
+  const [colorPass, setColorPass] = useState("primary")
+  const [colorCheckPass, setColorCheckPass] = useState("primary")
+  const [colorEmail, setColorEmail] = useState("primary")
+  const [colorPhone, setColorPhone] = useState("primary")
+  const [error, setError] = useState()
 
   return (
     <div>
@@ -72,14 +113,21 @@ export default function FormDialog(props) {
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>{props.name}</DialogTitle>
         <DialogContent class="dialog">
-            <TextField id="outlined-basic" label="login" variant="outlined" value={login} fullWidth 
+            <TextField id="outlined-basic" label="login" variant="outlined"  value={login} fullWidth 
                 onChange={e => setLogin(e.target.value)}/>
-            <TextField id="outlined-basic" label="password" variant="outlined" value={password} fullWidth 
+            <TextField id="outlined-basic" label="password" type="password" variant="outlined" value={password} fullWidth
+              color={colorPass}
                 onChange={e=> setPassword(e.target.value)}/>
+            {props.name === "Register" && <TextField id="outlined-basic" label="check password" type="password" variant="outlined" 
+              color={colorCheckPass} value={checkPassword} fullWidth 
+                onChange={e=> setCheckPassword(e.target.value)}/>}
             {props.name === "Register" && <TextField id="outlined-basic" label="phone" variant="outlined" value={phone} fullWidth 
-                onChange={(e)=> setPhone(e.target.value)}/>}
+                color={colorPhone} onChange={(e)=> setPhone(e.target.value)}/>}
             {props.name === "Register" && <TextField id="outlined-basic" label="email" variant="outlined" value={email} fullWidth 
-                onChange={(e)=> setEmail(e.target.value)}/>}
+                color={colorEmail} onChange={(e)=> setEmail(e.target.value)}/>}
+            <Typography variant="subtitle1" gutterBottom color="red">
+              {error}
+            </Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>

@@ -34,12 +34,16 @@ export default function MediaCard(props) {
         console.log("Word is learning");
         props.onLearnWord(props.learnWord + 1);
         if(write === props.word.name){
+          setColor("success")
           props.onRightWord(props.rightWord + 1);
         }
+        else
+          setColor("error")
         console.log(props.learnWord + " - " + props.rightWord);
     })
   };
   const [write, setWrite] = React.useState("")
+  const [color, setColor] = React.useState("secondary")
   return (
     <Card sx={{ minWidth: 215, boxShadow: "2px 2px 5px 5px #B6ADAF", margin: "15px 0px" }}>
       {props.learn ? <CardMedia
@@ -61,8 +65,8 @@ export default function MediaCard(props) {
       <CardActions>
         {!props.learn ? <AddWord word={props.word} idUser={props.idUser} idTag={props.idTag} />
         :
-        <TextField style={{width:"30vw"}} label="Input right word" color="secondary" variant="outlined" 
-        value={write} onChange={e => setWrite(e.target.value)}/> }
+        <TextField style={{width:"30vw"}} label="Input right word" color={color} variant="outlined" 
+        value={write} onChange={e => setWrite(e.target.value)} focused/> }
 
         {!props.learn ?<Fab style={{margin: "5px", backgroundColor:"#B6ADAF"}} color="secondary" aria-label="delete" 
         onClick={() => DeleteWord(props.word.id)}>
